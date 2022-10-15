@@ -1,14 +1,68 @@
 from docx import Document
 from docx.shared import Inches
+import os
 
 TEMPLATE_PATH = 'a.docx'
 
 document = Document('a.docx')
 
-# document.add_heading('Document GHD', 0)
+document.add_heading('Document GHD', 1)
 
-document.add_page_break()
-p = document.add_paragraph('A plain paragraph having some ')
+import glob
+last_part = ""
+last_secc = ""
+for f in glob.glob('images/**/*.png', recursive=True):
+    path = f.split('\\')
+    part=""
+    secc=""
+
+    if len(path) == 2:
+        file_name = path[-1]
+    if len(path) == 3:
+        part = path[1]
+        file_name = path[-1]
+    if len(path) == 4:
+        part = path[1]
+        secc = path[2]
+        file_name = path[-1]
+
+    # print(part, secc, file_name)
+    # part is not empty and secc is empty
+    if part == "" and secc == "":
+        document.add_picture(f)
+        # document.add_paragraph(file_name[:-4])
+
+    # part is not empty and secc is not empty
+    if part != "" and secc != "":
+        if last_part != part:
+            last_part = part
+            last_secc = ""
+            document.add_page_break()
+            document.add_paragraph(part)
+
+        if last_secc != secc:
+            last_secc = secc
+            document.add_paragraph(secc)
+            
+        
+        document.add_picture(f)
+        # document.add_paragraph(file_name[:-4])
+
+    # part is empty and secc is not empty
+    if part != "" and secc == "":
+        if last_part != part:
+            last_part = part
+            document.add_page_break()
+            document.add_paragraph(part)
+
+        document.add_picture(f)
+        # document.add_paragraph(file_name[:-4])
+
+    document.add_page_break()
+
+document.save('demo.docx')
+
+# p = document.add_paragraph('A plain paragraph having some ')
 # p.add_run('bold').bold = True
 # p.add_run(' and some ')
 # p.add_run('italic.').italic = True
@@ -43,4 +97,4 @@ p = document.add_paragraph('A plain paragraph having some ')
 #     row_cells[2].text = desc
 
 
-document.save('demo.docx')
+# document.save('demo.docx')
