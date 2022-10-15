@@ -13,6 +13,8 @@ if os.path.exists(IMAGES_PATH):
     shutil.rmtree(IMAGES_PATH)
 os.mkdir(IMAGES_PATH)
 
+
+
 with open(NB_NAME, "r", encoding="utf-8") as f:
     nb = json.load(f)
 
